@@ -17,30 +17,32 @@ function App() {
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
 
+  const API = process.env.REACT_APP_API_URL;
+
   /* ================= FETCH ================= */
 
   const fetchUsers = () =>
-fetch(`${process.env.REACT_APP_API_URL}/users`)
+    fetch(`${API}/users`)
       .then(res => res.json())
       .then(setUsers);
 
   const fetchGroups = () =>
-    fetch(`${process.env.REACT_APP_API_URL}/groups`)
+    fetch(`${API}/groups`)
       .then(res => res.json())
       .then(setGroups);
 
   const fetchGroupData = (groupId) => {
     setSelectedGroup(groupId);
 
-    fetch(`${process.env.REACT_APP_API_URL}/groups/expenses/${groupId}`)
+    fetch(`${API}/groups/expenses/${groupId}`)
       .then(res => res.json())
       .then(setExpenses);
 
-    fetch(`${process.env.REACT_APP_API_URL}/groups/${groupId}/balances`)
+    fetch(`${API}/groups/${groupId}/balances`)
       .then(res => res.json())
       .then(setBalances);
 
-    fetch(`${process.env.REACT_APP_API_URL}/groups/${groupId}/settlements`)
+    fetch(`${API}/groups/${groupId}/settlements`)
       .then(res => res.json())
       .then(setSettlements);
   };
@@ -55,7 +57,7 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
   const addUser = () => {
     if (!newUserName) return;
 
-    fetch("http://localhost:5000/users", {
+    fetch(`${API}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newUserName })
@@ -66,7 +68,7 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
   };
 
   const deleteUser = (id) => {
-    fetch(`http://localhost:5000/users/${id}`, {
+    fetch(`${API}/users/${id}`, {
       method: "DELETE"
     }).then(fetchUsers);
   };
@@ -76,7 +78,7 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
   const addGroup = () => {
     if (!newGroupName) return;
 
-    fetch("http://localhost:5000/groups", {
+    fetch(`${API}/groups`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newGroupName, created_by: 1 })
@@ -87,26 +89,25 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
   };
 
   const deleteGroup = (id) => {
-  fetch(`http://localhost:5000/groups/${id}`, {
-    method: "DELETE"
-  }).then(() => {
-    if (selectedGroup === id) {
-      setSelectedGroup(null);
-      setExpenses([]);
-      setBalances([]);
-      setSettlements([]);
-    }
-    fetchGroups();
-  });
-};
-
+    fetch(`${API}/groups/${id}`, {
+      method: "DELETE"
+    }).then(() => {
+      if (selectedGroup === id) {
+        setSelectedGroup(null);
+        setExpenses([]);
+        setBalances([]);
+        setSettlements([]);
+      }
+      fetchGroups();
+    });
+  };
 
   /* ================= EXPENSE ================= */
 
   const addExpense = () => {
     if (!description || !amount || !paidBy || !selectedGroup) return;
 
-    fetch("http://localhost:5000/groups/add-expense", {
+    fetch(`${API}/groups/add-expense`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -125,7 +126,7 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
   };
 
   const deleteExpense = (expenseId) => {
-    fetch(`http://localhost:5000/groups/expense/${expenseId}`, {
+    fetch(`${API}/groups/expense/${expenseId}`, {
       method: "DELETE"
     }).then(() => fetchGroupData(selectedGroup));
   };
@@ -150,16 +151,7 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
           {users.map(u => (
             <li key={u.id} className="row">
               {u.name}
-              <button
-  className="danger"
-  onClick={(e) => {
-    e.stopPropagation();
-    deleteUser(u.id);
-  }}
->
-  ✕
-</button>
-
+              <button className="danger" onClick={() => deleteUser(u.id)}>✕</button>
             </li>
           ))}
         </ul>
@@ -204,17 +196,10 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
             <h2>Add Expense</h2>
 
             <label>Description</label>
-            <input
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-            />
+            <input value={description} onChange={e => setDescription(e.target.value)} />
 
             <label>Amount</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-            />
+            <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
 
             <label>Who paid?</label>
             <select value={paidBy} onChange={e => setPaidBy(e.target.value)}>
@@ -230,27 +215,17 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
           {/* EXPENSE HISTORY */}
           <div className="card">
             <h2>Expense History</h2>
-
-            {expenses.length === 0 ? (
-              <p>No expenses yet.</p>
-            ) : (
-              <ul>
-                {expenses.map(exp => (
-                  <li key={exp.expense_id} className="expense">
-                    <div><strong>{exp.description}</strong></div>
-                    <div>
-                      ₹{exp.amount} — Paid by <b>{exp.payer_name}</b>
-                    </div>
-                    <button
-                      className="danger"
-                      onClick={() => deleteExpense(exp.expense_id)}
-                    >
-                      Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ul>
+              {expenses.map(exp => (
+                <li key={exp.expense_id} className="expense">
+                  <strong>{exp.description}</strong>
+                  <div>₹{exp.amount} — Paid by {exp.payer_name}</div>
+                  <button className="danger" onClick={() => deleteExpense(exp.expense_id)}>
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* BALANCES */}
@@ -259,12 +234,8 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
             <ul>
               {balances.map(b => (
                 <li key={b.user_id}>
-                  {b.name}:{" "}
-                  {b.balance > 0
-                    ? `Gets ₹${b.balance}`
-                    : b.balance < 0
-                    ? `Owes ₹${-b.balance}`
-                    : "Settled"}
+                  {b.name}: {b.balance > 0 ? `Gets ₹${b.balance}` :
+                  b.balance < 0 ? `Owes ₹${-b.balance}` : "Settled"}
                 </li>
               ))}
             </ul>
@@ -273,17 +244,13 @@ fetch(`${process.env.REACT_APP_API_URL}/users`)
           {/* SETTLEMENTS */}
           <div className="card">
             <h2>Settlements</h2>
-            {settlements.length === 0 ? (
-              <p>No settlements needed 🎉</p>
-            ) : (
-              <ul>
-                {settlements.map((s, i) => (
-                  <li key={i} className="settlement">
-                    {s.from} pays {s.to} ₹{s.amount}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ul>
+              {settlements.map((s, i) => (
+                <li key={i} className="settlement">
+                  {s.from} pays {s.to} ₹{s.amount}
+                </li>
+              ))}
+            </ul>
           </div>
         </>
       )}
