@@ -1,0 +1,129 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-top: 30px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
+}
+
+/* Card layout */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Inputs */
+input {
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Buttons */
+button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1e40af;
+}
+
+/* Lists */
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: #f1f5f9;
+  border-radius: 5px;
+}
+
+/* Clickable groups */
+.group-item {
+  cursor: pointer;
+}
+
+.group-item:hover {
+  background-color: #e0e7ff;
+}
+
+/* Selected group */
+.selected {
+  background-color: #c7d2fe;
+  font-weight: bold;
+}
+
+/* Expense highlight */
+.expense {
+  margin-bottom: 10px;
+}
+
+/* Settlement */
+.settlement {
+  background-color: #ecfeff;
+  border-left: 4px solid #06b6d4;
+}
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+select {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.danger {
+  background: #dc2626;
+  margin-left: 10px;
+}
+.expense {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.row,
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button {
+  cursor: pointer;
+}
